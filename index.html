@@ -7,7 +7,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap" rel="stylesheet">
-    <title>Document</title>
+    <title>LOGIN</title>
 </head>
 <body>
     <!-- Login form -->
@@ -16,7 +16,7 @@
         <img class="item-top-right" src="./assets/img/login/bg-top-right.png" alt="">
         <img class="item-circle" src="./assets/img/login/bg-circle.png" alt="">
         <img class="item-bottom-left" src="./assets/img/login/bg-bottom-left.png" alt="">
-        <div class="login-form">
+        <form class="login-form">
             <div class="col-left">
                 <img src="./assets/img/login/group.png" alt="">
                 <img class="logo" src="./assets/img/login/Logo.png" alt="">
@@ -35,9 +35,11 @@
                 <div class="body-form">
                     <label for="email">Email</label>
                     <input type="text" name="email" id="email" placeholder="Enter your email">
+                    <p class=" error error-email"></p>
 
                     <label for="password">Password</label>
                     <input type="password" name="password" id="password" placeholder="Enter your password">
+                    <p class="error error-password"></p>
 
                     <div class="remember">
                         <input type="checkbox" name="checkbox" id="checkbox" />
@@ -46,7 +48,7 @@
                     <button>Login</button>
                 </div>
             </div>
-        </div>
+        </form>
     </div>
 </body>
 <script src="./assets/main.js"></script>
