@@ -11,9 +11,21 @@
 </head>
 <body>
     <div class="container">
+        <!-- begin popup create task -->
+        <div class="popup-container">
+            <form class="popup-main">
+                <img id="close" src="./assets/img/icon/close.svg" alt="">
+                <h2>Add new todo</h2>
+                <input type="text" id="caption" placeholder="Category. Etc. Marketing...">
+                <input type="text" id="title" placeholder="Title">
+                <textarea id="content" placeholder="Enter your Content here..."></textarea>
+                <button type="submit" onclick="onCreate">Submit</button>
+            </form>
+        </div>
+        <!-- end popup -->
         <div class="header">
             <img src="./assets/img/home/Task.png" alt="">
-            <div class="create-task">
+            <div class="create-task">  
                 <img src="./assets/img/icon/plus.svg" alt="">
                 <span>New task</span>
             </div>
@@ -26,12 +38,12 @@
                     <p class="todo-num">1</p>
                 </div>
                 <div class="line color-todo"></div>
-                <div class="task">
+                <div class="task" id="todo">
                     <div class="item">
                         <div class="row-1">
                             <div class="col-1">
-                                <a href="#">Marketing</a>
-                                <h2>Write SEO article for new product</h2>
+                                <a class="caption" href="#">Marketing</a>
+                                <h2 class="title">Write SEO article for new product</h2>
                                 <div class="division"></div>
                             </div>
                             <div class="col-2">
@@ -40,7 +52,7 @@
                             </div>
                         </div>
                         <div class="row-2">
-                            <p class="note">This is an existential moment for effective altruism and the rationalist community writ-large.</p>
+                            <p class="note content">This is an existential moment for effective altruism and the rationalist community writ-large.</p>
                             <div class="date">
                                 <img src="./assets/img/icon/clock-line.svg" alt="">
                                 <span>June 30, 2022</span>
@@ -57,7 +69,7 @@
                     <p class="doing-num">1</p>
                 </div>
                 <div class="line color-doing"></div>
-                <div class="task">
+                <div class="task" id="doing">
                     <div class="item">
                         <div class="row-1">
                             <div class="col-1">
@@ -88,7 +100,7 @@
                     <p class="completed-num">1</p>
                 </div>
                 <div class="line color-completed"></div>
-                <div class="task">
+                <div class="task" id="completed">
                     <div class="item">
                         <div class="row-1">
                             <div class="col-1">
@@ -119,7 +131,7 @@
                     <p class="block-num">1</p>
                 </div>
                 <div class="line color-block"></div>
-                <div class="task">
+                <div class="task" id="block">
                     <div class="item">
                         <div class="row-1">
                             <div class="col-1">
