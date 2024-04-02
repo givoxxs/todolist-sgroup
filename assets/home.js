@@ -1,14 +1,27 @@
-let todo  = []
+let todo = []
 let doing = []
 let completed = []
 let block = []
 
-if (localStorage.getItem("data") === null) {
-    data = JSON.parse(localStorage.getItem("data"))
-    localStorage.setItem("data", JSON.stringify(data))
+if (localStorage.getItem("todo")) {
+    todo = JSON.parse(localStorage.getItem("todo"))
+    localStorage.setItem("todo", JSON.stringify(todo))
 }
 
-renderNumber()
+if (localStorage.getItem("doing")) {
+    doing = JSON.parse(localStorage.getItem("doing"))
+    localStorage.setItem("doing", JSON.stringify(doing))
+}
+
+if (localStorage.getItem("completed")) {
+    completed = JSON.parse(localStorage.getItem("completed"))
+    localStorage.setItem("completed", JSON.stringify(completed))
+}
+
+if (localStorage.getItem("block")) {
+    block = JSON.parse(localStorage.getItem("block"))
+    localStorage.setItem("block", JSON.stringify(block))
+}
 
 let popupContainer = document.querySelector(".popup-container")
 let popupMain = document.querySelector(".popup-main")
@@ -20,6 +33,9 @@ let taskDoing = document.getElementById('doing')
 let taskCompleted = document.getElementById('completed')
 let taskBlock = document.getElementById('block')
 
+render()
+renderNumber()
+
 // open popup
 createTask.addEventListener('click', function() {
     let popupContainer = document.querySelector(".popup-container")
@@ -29,7 +45,7 @@ createTask.addEventListener('click', function() {
 popupContainer.addEventListener('click', function() {
     popupContainer.classList.toggle('active')
 })
-
+// close popup
 close.addEventListener('click', function() {
     let popupContainer= document.querySelector(".popup-container")
     document.getElementById("caption").value = ""
@@ -41,7 +57,6 @@ close.addEventListener('click', function() {
 popupMain.addEventListener('click', function(event) {
     event.stopPropagation()
 })
-
 // add task
 popupMain.addEventListener('submit', function(event) {
     event.preventDefault()
@@ -68,36 +83,7 @@ popupMain.addEventListener('submit', function(event) {
     popupContainer.classList.toggle('active')
     renderNumber()
 })
-
-// render task
-// function render() {
-//     let elements = todo.map((item, index) => {
-//         return `
-//             <div class="item">
-//                 <div class="row-1">
-//                     <div class="col-1">
-//                         <a class="caption" href="#">${item.caption}</a>
-//                         <h2 class="title">${item.title}</h2>
-//                         <div class="division"></div>
-//                     </div>
-//                     <div class="col-2">
-//                         <img class="editTask" onclick="onEdit(${index}, 'todo')" src="./assets/img/icon/pencil.svg" alt="">
-//                         <img class="deleteTask" onclick="onDelete(${index}, 'todo')" src="./assets/img/icon/trashcan.svg" alt="">
-//                     </div>
-//                 </div>
-//                 <div class="row-2">
-//                     <p class="note content">${item.content}</p>
-//                     <div class="date">
-//                         <img src="./assets/img/icon/clock-line.svg" alt="">
-//                         <span>June 30, 2022</span>
-//                     </div>
-//                 </div>
-//             </div>
-//         `
-//     })
-//     taskTodo.innerHTML = elements.join('')
-// }
-// update task
+// update number for each status
 function renderNumber() {
     let todoNumber = document.querySelector('.todo-num')
     let doingNumber = document.querySelector('.doing-num')
@@ -131,37 +117,6 @@ function onDelete(index, type) {
     }
     renderNumber()
 }
-// move task
-function onMove(index, type) {
-    let task = {}
-    if (type === 'todo') {
-        task = todo[index]
-        doing.push(task)
-        todo.splice(index, 1)
-        localStorage.setItem("todo", JSON.stringify(todo))
-        localStorage.setItem("doing", JSON.stringify(doing))
-    } else if (type === 'doing') {
-        task = doing[index]
-        completed.push(task)
-        doing.splice(index, 1)
-        localStorage.setItem("doing", JSON.stringify(doing))
-        localStorage.setItem("completed", JSON.stringify(completed))
-    } else if (type === 'completed') {
-        task = completed[index]
-        block.push(task)
-        completed.splice(index, 1)
-        localStorage.setItem("completed", JSON.stringify(completed))
-        localStorage.setItem("block", JSON.stringify(block))
-    } else {
-        task = block[index]
-        doing.push(task)
-        block.splice(index, 1)
-        localStorage.setItem("block", JSON.stringify(block))
-        localStorage.setItem("doing", JSON.stringify(doing))
-    }
-    render()
-    renderNumber()
-}
 // edit task
 let popupEditContainer = document.querySelector(".edit-container")
 let popupEditMain = document.querySelector(".editMain")
@@ -170,11 +125,11 @@ let closeEdit = document.querySelector("#editClose")
 let captionEdit = document.getElementById('captionEdit')
 let titleEdit = document.getElementById('titleEdit')
 let contentEdit = document.getElementById('contentEdit')
-
+// open popup edit
 popupEditContainer.addEventListener('click', function() {
     popupEditContainer.classList.toggle('active-edit')
 })
-
+// close popup edit
 closeEdit.addEventListener('click', function() {
     popupEditContainer.classList.toggle('active-edit')
 })
@@ -182,32 +137,38 @@ closeEdit.addEventListener('click', function() {
 popupEditMain.addEventListener('click', function(event) {
     event.stopPropagation()
 })
-// edit task
 
-function onEdit(index, type) { 
-    let task = {}
+let checkboxTodo = document.querySelector("#box-todo")
+let checkboxDoing = document.querySelector("#box-doing")
+let checkboxCompleted = document.querySelector("#box-completed")
+let checkboxBlock = document.querySelector("#box-block")
 
-    type = getTypeFromCheckboxId(index)
-
-    // Function to extract type from checkbox ID
-    function getTypeFromCheckboxId(index) {
-        let checkboxId = 'box-' + index;
-        if (document.getElementById(checkboxId)) {
-            if (document.getElementById(checkboxId).checked) {
-                if (checkboxId.includes('todo')) {
-                    return 'todo';
-                } else if (checkboxId.includes('doing')) {
-                    return 'doing';
-                } else if (checkboxId.includes('completed')) {
-                    return 'completed';
-                } else if (checkboxId.includes('block')) {
-                    return 'block';
-                }
+// only one checkbox can be checked
+document.querySelectorAll('.status-item input[type="checkbox"]').forEach(input => {
+    input.addEventListener('change', function() {
+        document.querySelectorAll('.status-item input[type="checkbox"]').forEach(checkbox => {
+            if (checkbox !== input) {
+                checkbox.checked = false
             }
-        }
-        // Default to 'todo' if no checkbox is checked
-        return 'todo';
-    }
+        })
+    })
+})
+// pre data
+let editIndex = null
+let preType = null
+let taskToEdit = null
+// edit task
+function onEdit(index, type) { 
+    editIndex = index
+    preType = type
+
+    let task = {}
+    console.log("index cua no la", index)
+    console.log("type cua no la", type) 
+    console.log("editIndex: ", editIndex)
+    console.log("preType: ", preType)  
+
+    console.log(checkboxTodo)
 
     if (type === 'todo') {
         task = todo[index]
@@ -218,52 +179,93 @@ function onEdit(index, type) {
     } else {
         task = block[index]
     }
-    console.log(index)
+
+    taskToEdit = task
+
+    console.log(task)
+    
     let popupEditContainer = document.querySelector(".edit-container")
     popupEditContainer.classList.toggle('active-edit')
 
-    let captionEdit = document.getElementById('captionEdit')
-    let titleEdit = document.getElementById('titleEdit')
-    let contentEdit = document.getElementById('contentEdit')
+    document.querySelector('#captionEdit').value = task.caption
+    document.querySelector('#titleEdit').value = task.title
+    document.querySelector('#contentEdit').value = task.content
 
-    captionEdit.value = task.caption
-    titleEdit.value = task.title
-    contentEdit.value = task.content
-
-    popupEditMain.addEventListener('submit', function(event) {
-        event.preventDefault()
-        let caption = document.getElementById('captionEdit').value
-        let title = document.getElementById('titleEdit').value
-        let content = document.getElementById('contentEdit').value
-
-        console.log(caption)
-        console.log(title)
-        console.log(content)
-
-        let task = {
-            caption: caption,
-            title: title,
-            content: content
-        }
-        if (type === 'todo') {
-            todo.splice(index, 1, task)
-            localStorage.setItem("todo", JSON.stringify(todo))
-        } else if (type === 'doing') {
-            doing.splice(index, 1, task)
-            localStorage.setItem("doing", JSON.stringify(doing))
-        } else if (type === 'completed') {
-            completed.splice(index, 1, task)
-            localStorage.setItem("completed", JSON.stringify(completed))
+    let checkboxes = document.querySelectorAll('.box')
+    console.log("checkboxs", checkboxes)
+    checkboxes.forEach(checkbox => {
+        if (checkbox.id === `box-${type}`) {
+            checkbox.checked = true
         } else {
-            block.splice(index, 1, task)
-            localStorage.setItem("block", JSON.stringify(block))
+            checkbox.checked = false
         }
-        render()
-        popupEditContainer.classList.toggle('active-edit')
-    })
+    });
 }
+// save edit task
+popupEditMain.addEventListener('submit', function(event) {
+    event.preventDefault()
+    let caption = document.getElementById('captionEdit').value
+    let title = document.getElementById('titleEdit').value
+    let content = document.getElementById('contentEdit').value
 
+    console.log(caption)
+    console.log(title)
+    console.log(content)
+
+    let task = {
+        caption: caption,
+        title: title,
+        content: content
+    }
+
+    let type;
+    if (checkboxTodo.checked) {
+        type = 'todo'
+    } else if (checkboxDoing.checked) {
+        type = 'doing'
+    } else if (checkboxCompleted.checked) {
+        type = 'completed'
+    } else if (checkboxBlock.checked) {
+        type = 'block'
+    }
+
+    if (type === 'todo') {
+        todo.push(task)
+        localStorage.setItem("todo", JSON.stringify(todo))
+    } else if (type === 'doing') {
+        doing.push(task)
+        localStorage.setItem("doing", JSON.stringify(doing))
+    } else if (type === 'completed') {
+        completed.push(task)
+        localStorage.setItem("completed", JSON.stringify(completed))
+    } else if (type === 'block') {
+        block.push(task)
+        localStorage.setItem("block", JSON.stringify(block))
+    }
+
+    if (preType === 'todo') {
+        todo.splice(editIndex, 1)
+        localStorage.setItem("todo", JSON.stringify(todo))
+    } else if (preType === 'doing') {
+        doing.splice(editIndex, 1)
+        localStorage.setItem("doing", JSON.stringify(doing))
+    } else if (preType === 'completed') {
+        completed.splice(editIndex, 1)
+        localStorage.setItem("completed", JSON.stringify(completed))
+    } else {
+        block.splice(editIndex, 1)
+        localStorage.setItem("block", JSON.stringify(block))
+    }
+
+    render()
+    renderNumber()
+    editIndex = null
+    preType = null
+    popupEditContainer.classList.toggle('active-edit')
+})
+// render task
 function render() { 
+    // render task todo
     let elements = todo.map((item, index) => {
         return `
         <div class="item">
@@ -287,8 +289,8 @@ function render() {
         </div>
     </div>
         `
-    }
-    )
+    })
+    // render task doing
     taskTodo.innerHTML = elements.join('')
     elements = doing.map((item, index) => {
         return `
@@ -313,8 +315,8 @@ function render() {
         </div>
     </div>
         `
-    }
-    )
+    })
+    // render task completed
     taskDoing.innerHTML = elements.join('')
     elements = completed.map((item, index) => {
         return `
@@ -339,8 +341,8 @@ function render() {
             </div>
         </div>
         `
-    }
-    )
+    })
+    // render task block
     taskCompleted.innerHTML = elements.join('')
     elements = block.map((item, index) => {
         return `
@@ -365,7 +367,6 @@ function render() {
             </div>
         </div>
         `
-    }
-    )
+    })
     taskBlock.innerHTML = elements.join('')
 }
