@@ -51,12 +51,22 @@ close.addEventListener('click', function() {
     document.getElementById("caption").value = ""
     document.getElementById("title").value = ""
     document.getElementById("content").value = ""
+    document.getElementById("")
     popupContainer.classList.toggle('active')
 })
 
 popupMain.addEventListener('click', function(event) {
     event.stopPropagation()
 })
+
+// clock
+function getCurrentTime() {
+    const now = new Date();
+    const month = now.toLocaleString('en', { month: 'long' })
+    const day = now.getDate()
+    const year = now.getFullYear()
+    return `${month} ${day}, ${year}`
+}
 // add task
 popupMain.addEventListener('submit', function(event) {
     event.preventDefault()
@@ -64,14 +74,43 @@ popupMain.addEventListener('submit', function(event) {
     let title = document.getElementById('title').value
     let content = document.getElementById('content').value
 
-    console.log(caption)
-    console.log(title)
-    console.log(content)
+    let captionStyle = document.getElementById('caption')
+    let titleStyle = document.getElementById('title')
+    let contentStyle = document.getElementById('content')
+
+    if (!caption || !title || !content) {
+        if (!caption) {
+            captionStyle.style.border = "2px solid red"
+            console.log("t đè màu đỏ rồi")
+        } else {
+            captionStyle.style.border = "1px solid green"
+        }
+        if (!title) {
+            titleStyle.style.border = "2px solid red"
+            console.log('t cũng đè màu đỏ rồi')
+        } else {
+            titleStyle.style.border = "1px solid green"
+        }
+        if (!content) {
+            contentStyle.style.border = "2px solid red"
+        } else {
+            contentStyle.style.border = "1px solid green"
+        }
+        return
+    } else {
+        captionStyle.style.border = "1px solid rgba(0, 0, 0, 0.5);"
+        titleStyle.style.border = "1px solid rgba(0, 0, 0, 0.5);"
+        contentStyle.style.border = "1px solid rgba(0, 0, 0, 0.5);"
+    }
+
+    let currentTime = getCurrentTime();
+    console.log(currentTime)
 
     let task = {
         caption: caption,
         title: title,
-        content: content
+        content: content,
+        time: currentTime
     }
     todo.push(task)
     console.log(todo)
@@ -157,6 +196,7 @@ document.querySelectorAll('.status-item input[type="checkbox"]').forEach(input =
 let editIndex = null
 let preType = null
 let taskToEdit = null
+let timeSave = null
 // edit task
 function onEdit(index, type) { 
     editIndex = index
@@ -181,6 +221,7 @@ function onEdit(index, type) {
     }
 
     taskToEdit = task
+    timeSave = task.time
 
     console.log(task)
     
@@ -215,7 +256,8 @@ popupEditMain.addEventListener('submit', function(event) {
     let task = {
         caption: caption,
         title: title,
-        content: content
+        content: content,
+        time: timeSave
     }
 
     let type;
@@ -268,7 +310,7 @@ function render() {
     // render task todo
     let elements = todo.map((item, index) => {
         return `
-        <div class="item">
+        <div class="item" draggable="true">
         <div class="row-1">
             <div class="col-1">
                 <a class="caption" href="#">${item.caption}</a>
@@ -284,7 +326,7 @@ function render() {
             <p class="note content">${item.content}</p>
             <div class="date">
                 <img src="./assets/img/icon/clock-line.svg" alt="">
-                <span>June 30, 2022</span>
+                <span class="clock">${item.time}</span>
             </div>
         </div>
     </div>
@@ -294,7 +336,7 @@ function render() {
     taskTodo.innerHTML = elements.join('')
     elements = doing.map((item, index) => {
         return `
-        <div class="item">
+        <div class="item" draggable="true">
         <div class="row-1">
             <div class="col-1">
                 <a class="caption" href="#">${item.caption}</a>
@@ -310,7 +352,7 @@ function render() {
             <p class="note content">${item.content}</p>
             <div class="date">
                 <img src="./assets/img/icon/clock-line.svg" alt="">
-                <span>June 30, 2022</span>
+                <span class="clock">${item.time}</span>
             </div>
         </div>
     </div>
@@ -320,7 +362,7 @@ function render() {
     taskDoing.innerHTML = elements.join('')
     elements = completed.map((item, index) => {
         return `
-        <div class="item">
+        <div class="item" draggable="true">
             <div class="row-1">
                 <div class="col-1">
                     <a class="caption" href="#">${item.caption}</a>
@@ -336,7 +378,7 @@ function render() {
                 <p class="note content">${item.content}</p>
                 <div class="date">
                     <img src="./assets/img/icon/clock-line.svg" alt="">
-                    <span>June 30, 2022</span>
+                    <span class="clock">${item.time}</span>
                 </div>
             </div>
         </div>
@@ -346,7 +388,7 @@ function render() {
     taskCompleted.innerHTML = elements.join('')
     elements = block.map((item, index) => {
         return `
-        <div class="item">
+        <div class="item" draggable="true">
             <div class="row-1">
                 <div class="col-1">
                     <a class="caption" href="#">${item.caption}</a>
@@ -362,11 +404,102 @@ function render() {
                 <p class="note content">${item.content}</p>
                 <div class="date">
                     <img src="./assets/img/icon/clock-line.svg" alt="">
-                    <span>June 30, 2022</span>
+                    <span class="clock">${item.time}</span>
                 </div>
             </div>
         </div>
         `
     })
     taskBlock.innerHTML = elements.join('')
+}
+
+// drag and drop
+taskTodo.addEventListener('dragstart', dragStart)
+taskDoing.addEventListener('dragstart', dragStart)
+taskCompleted.addEventListener('dragstart', dragStart)
+taskBlock.addEventListener('dragstart', dragStart)
+
+taskTodo.addEventListener('dragover', dragOver)
+taskDoing.addEventListener('dragover', dragOver)
+taskCompleted.addEventListener('dragover', dragOver)
+taskBlock.addEventListener('dragover', dragOver)
+
+taskTodo.addEventListener('drop', drop)
+taskDoing.addEventListener('drop', drop)
+taskCompleted.addEventListener('drop', drop)
+taskBlock.addEventListener('drop', drop)
+
+function dragStart(event) {
+    event.dataTransfer.setData("text/plain", event.target.id)
+}
+
+function dragOver(event) {
+    event.preventDefault()
+}
+
+function drop(event) {
+    event.preventDefault()
+    const taskId = event.dataTransfer.getData("text/plain")
+    const taskElement = document.getElementById(taskId)
+    const targetElement = event.currentTarget
+
+    const targetId = targetElement.id
+    const targetList = getListById(targetId)
+
+    const sourceId = taskElement.parentElement.id
+    const sourceList = getListById(sourceId)
+
+    const taskIndex = Array.from(sourceList.children).indexOf(taskElement)
+
+    if (sourceList === targetList) {
+        const targetIndex = Array.from(targetList.children).indexOf(targetElement)
+        if (taskIndex < targetIndex) {
+            targetList.insertBefore(taskElement, targetElement.nextSibling)
+        } else {
+            targetList.insertBefore(taskElement, targetElement)
+        }
+    } else {
+        targetList.insertBefore(taskElement, targetElement)
+    }
+
+    updateLocalStorage()
+}
+
+function getListById(id) {
+    switch (id) {
+        case 'todo':
+            return taskTodo
+        case 'doing':
+            return taskDoing
+        case 'completed':
+            return taskCompleted
+        case 'block':
+            return taskBlock
+        default:
+            return null
+    }
+}
+
+function updateLocalStorage() {
+    todo = Array.from(taskTodo.children).map(task => getTaskData(task))
+    doing = Array.from(taskDoing.children).map(task => getTaskData(task))
+    completed = Array.from(taskCompleted.children).map(task => getTaskData(task))
+    block = Array.from(taskBlock.children).map(task => getTaskData(task))
+
+    localStorage.setItem("todo", JSON.stringify(todo))
+    localStorage.setItem("doing", JSON.stringify(doing))
+    localStorage.setItem("completed", JSON.stringify(completed))
+    localStorage.setItem("block", JSON.stringify(block))
+}
+
+function getTaskData(taskElement) {
+    const caption = taskElement.querySelector('.caption').textContent
+    const title = taskElement.querySelector('.title').textContent
+    const content = taskElement.querySelector('.content').textContent
+
+    return {
+        caption,
+        title,
+        content
+    }
 }

@@ -163,22 +163,36 @@ p,span,div {
     height: 700px;
 }
 
-.task[draggable="true"] {
+.custom-scrollbar::-webkit-scrollbar {
+    width: 10px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+    background-color: rgba(0, 0, 0, 0.5); 
+    border-radius: 3px; 
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+    background-color: rgba(0, 0, 0, 0.1); 
+    border-radius: 5px; 
+}
+
+.item[draggable="true"] {
     transition: none !important;
     animation: none !important;
-    opacity: 1; /* Giảm độ mờ */
-    filter: none; /* Loại bỏ filter */
+    opacity: 1; 
+    filter: none; 
 }
 
 /* Task item */
 .item {
     display: flex;
     flex-direction: column;
-    width: 100%;
+    width: 98%;
     padding: 10px 15px 20px;
     border-bottom: 1px solid #E5E5E5;
     background-color: #fff;
-    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, .1), 0 5px 5px rgba(0, 0, 0, .25);
     border-radius: 8px;
     margin-bottom: 30px;
 }
