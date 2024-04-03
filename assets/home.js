@@ -40,6 +40,18 @@ renderNumber()
 createTask.addEventListener('click', function() {
     let popupContainer = document.querySelector(".popup-container")
     popupContainer.classList.toggle('active')
+
+    document.getElementById("caption").value = ""
+    document.getElementById("title").value = ""
+    document.getElementById("content").value = ""
+
+    let captionStyle = document.getElementById('caption')
+    let titleStyle = document.getElementById('title')
+    let contentStyle = document.getElementById('content')
+
+    captionStyle.style.border = "1px solid rgba(0, 0, 0, 0.5)"
+    titleStyle.style.border = "1px solid rgba(0, 0, 0, 0.5)"
+    contentStyle.style.border = "1px solid rgba(0, 0, 0, 0.5)"
 })
 
 popupContainer.addEventListener('click', function() {
@@ -48,10 +60,6 @@ popupContainer.addEventListener('click', function() {
 // close popup
 close.addEventListener('click', function() {
     let popupContainer= document.querySelector(".popup-container")
-    document.getElementById("caption").value = ""
-    document.getElementById("title").value = ""
-    document.getElementById("content").value = ""
-    document.getElementById("")
     popupContainer.classList.toggle('active')
 })
 
@@ -81,13 +89,11 @@ popupMain.addEventListener('submit', function(event) {
     if (!caption || !title || !content) {
         if (!caption) {
             captionStyle.style.border = "2px solid red"
-            console.log("t đè màu đỏ rồi")
         } else {
             captionStyle.style.border = "1px solid green"
         }
         if (!title) {
             titleStyle.style.border = "2px solid red"
-            console.log('t cũng đè màu đỏ rồi')
         } else {
             titleStyle.style.border = "1px solid green"
         }
@@ -98,13 +104,12 @@ popupMain.addEventListener('submit', function(event) {
         }
         return
     } else {
-        captionStyle.style.border = "1px solid rgba(0, 0, 0, 0.5);"
-        titleStyle.style.border = "1px solid rgba(0, 0, 0, 0.5);"
-        contentStyle.style.border = "1px solid rgba(0, 0, 0, 0.5);"
+        captionStyle.style.border = "1px solid rgba(0, 0, 0, 0.5)"
+        titleStyle.style.border = "1px solid rgba(0, 0, 0, 0.5)"
+        contentStyle.style.border = "1px solid rgba(0, 0, 0, 0.5)"
     }
 
     let currentTime = getCurrentTime();
-    console.log(currentTime)
 
     let task = {
         caption: caption,
@@ -113,7 +118,6 @@ popupMain.addEventListener('submit', function(event) {
         time: currentTime
     }
     todo.push(task)
-    console.log(todo)
     localStorage.setItem("todo", JSON.stringify(todo))
     render()
     document.getElementById("caption").value = ""
@@ -202,13 +206,7 @@ function onEdit(index, type) {
     editIndex = index
     preType = type
 
-    let task = {}
-    console.log("index cua no la", index)
-    console.log("type cua no la", type) 
-    console.log("editIndex: ", editIndex)
-    console.log("preType: ", preType)  
-
-    console.log(checkboxTodo)
+    let task = {} 
 
     if (type === 'todo') {
         task = todo[index]
@@ -222,8 +220,6 @@ function onEdit(index, type) {
 
     taskToEdit = task
     timeSave = task.time
-
-    console.log(task)
     
     let popupEditContainer = document.querySelector(".edit-container")
     popupEditContainer.classList.toggle('active-edit')
@@ -233,7 +229,6 @@ function onEdit(index, type) {
     document.querySelector('#contentEdit').value = task.content
 
     let checkboxes = document.querySelectorAll('.box')
-    console.log("checkboxs", checkboxes)
     checkboxes.forEach(checkbox => {
         if (checkbox.id === `box-${type}`) {
             checkbox.checked = true
@@ -248,10 +243,6 @@ popupEditMain.addEventListener('submit', function(event) {
     let caption = document.getElementById('captionEdit').value
     let title = document.getElementById('titleEdit').value
     let content = document.getElementById('contentEdit').value
-
-    console.log(caption)
-    console.log(title)
-    console.log(content)
 
     let task = {
         caption: caption,
@@ -413,93 +404,78 @@ function render() {
     taskBlock.innerHTML = elements.join('')
 }
 
-// drag and drop
-taskTodo.addEventListener('dragstart', dragStart)
-taskDoing.addEventListener('dragstart', dragStart)
-taskCompleted.addEventListener('dragstart', dragStart)
-taskBlock.addEventListener('dragstart', dragStart)
+// drag and drop functionality
+const items = document.querySelectorAll('.item');
 
-taskTodo.addEventListener('dragover', dragOver)
-taskDoing.addEventListener('dragover', dragOver)
-taskCompleted.addEventListener('dragover', dragOver)
-taskBlock.addEventListener('dragover', dragOver)
+items.forEach(item => {
+    item.addEventListener('dragstart', dragStart);
+    item.addEventListener('dragend', dragEnd);
+    item.addEventListener('dragover', dragOver);
+    item.addEventListener('dragenter', dragEnter);
+    item.addEventListener('dragleave', dragLeave);
+    item.addEventListener('drop', dragDrop);
+});
 
-taskTodo.addEventListener('drop', drop)
-taskDoing.addEventListener('drop', drop)
-taskCompleted.addEventListener('drop', drop)
-taskBlock.addEventListener('drop', drop)
-
-function dragStart(event) {
-    event.dataTransfer.setData("text/plain", event.target.id)
+function dragStart() {
+    this.classList.add('dragging');
 }
 
-function dragOver(event) {
-    event.preventDefault()
+function dragEnd() {
+    this.classList.remove('dragging');
 }
 
-function drop(event) {
-    event.preventDefault()
-    const taskId = event.dataTransfer.getData("text/plain")
-    const taskElement = document.getElementById(taskId)
-    const targetElement = event.currentTarget
+function dragOver(e) {
+    e.preventDefault();
+}
 
-    const targetId = targetElement.id
-    const targetList = getListById(targetId)
+function dragEnter(e) {
+    e.preventDefault();
+    this.classList.add('dragover');
+}
 
-    const sourceId = taskElement.parentElement.id
-    const sourceList = getListById(sourceId)
+function dragLeave() {
+    this.classList.remove('dragover');
+}
 
-    const taskIndex = Array.from(sourceList.children).indexOf(taskElement)
+function dragDrop() {
+    const draggingItem = document.querySelector('.dragging');
+    const parent = this.parentElement;
+    const type = parent.id;
 
-    if (sourceList === targetList) {
-        const targetIndex = Array.from(targetList.children).indexOf(targetElement)
-        if (taskIndex < targetIndex) {
-            targetList.insertBefore(taskElement, targetElement.nextSibling)
-        } else {
-            targetList.insertBefore(taskElement, targetElement)
-        }
+    const index = Array.from(parent.children).indexOf(this);
+    let task;
+
+    if (type === 'todo') {
+        task = todo.splice(index, 1)[0];
+    } else if (type === 'doing') {
+        task = doing.splice(index, 1)[0];
+    } else if (type === 'completed') {
+        task = completed.splice(index, 1)[0];
+    } else if (type === 'block') {
+        task = block.splice(index, 1)[0];
+    }
+
+    if (draggingItem.parentElement.id === type) {
+        parent.insertBefore(draggingItem, this);
     } else {
-        targetList.insertBefore(taskElement, targetElement)
+        parent.insertBefore(draggingItem, this.nextSibling);
     }
 
-    updateLocalStorage()
-}
-
-function getListById(id) {
-    switch (id) {
-        case 'todo':
-            return taskTodo
-        case 'doing':
-            return taskDoing
-        case 'completed':
-            return taskCompleted
-        case 'block':
-            return taskBlock
-        default:
-            return null
+    if (type === 'todo') {
+        doing.splice(index, 0, task);
+    } else if (type === 'doing') {
+        completed.splice(index, 0, task);
+    } else if (type === 'completed') {
+        block.splice(index, 0, task);
+    } else if (type === 'block') {
+        completed.splice(index, 0, task);
     }
-}
 
-function updateLocalStorage() {
-    todo = Array.from(taskTodo.children).map(task => getTaskData(task))
-    doing = Array.from(taskDoing.children).map(task => getTaskData(task))
-    completed = Array.from(taskCompleted.children).map(task => getTaskData(task))
-    block = Array.from(taskBlock.children).map(task => getTaskData(task))
+    localStorage.setItem('todo', JSON.stringify(todo));
+    localStorage.setItem('doing', JSON.stringify(doing));
+    localStorage.setItem('completed', JSON.stringify(completed));
+    localStorage.setItem('block', JSON.stringify(block));
 
-    localStorage.setItem("todo", JSON.stringify(todo))
-    localStorage.setItem("doing", JSON.stringify(doing))
-    localStorage.setItem("completed", JSON.stringify(completed))
-    localStorage.setItem("block", JSON.stringify(block))
-}
-
-function getTaskData(taskElement) {
-    const caption = taskElement.querySelector('.caption').textContent
-    const title = taskElement.querySelector('.title').textContent
-    const content = taskElement.querySelector('.content').textContent
-
-    return {
-        caption,
-        title,
-        content
-    }
+    render();
+    renderNumber();
 }
