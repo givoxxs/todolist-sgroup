@@ -11,7 +11,7 @@ p,span,div {
 }
 
 .color-todo {
-    background-color: #00A6DA !important;
+    background-color: #00A6DA;
 }
 
 .todo-num {
@@ -19,27 +19,27 @@ p,span,div {
 }
 
 .color-doing {
-    background-color: rgba(204, 172, 3, 0.56) !important;
+    background-color: rgba(204, 172, 3, 0.56);
 }
 
 .doing-num {
-    background-color: #dab700 !important;
+    background-color: #dab700;
 }
 
 .color-completed {
-    background-color: #3bc057 !important;
+    background-color: #3bc057;
 }
 
 .completed-num {
-    background-color: #69be7e !important;
+    background-color: #69be7e;
 }
 
 .color-block {
-    background-color: #e74c3c !important;
+    background-color: #e74c3c;
 }
 
 .block-num {
-    background-color: #e37164 !important;
+    background-color: #e37164;
 }
 /* Header */
 .container {
@@ -111,7 +111,7 @@ p,span,div {
 }
 
 .status {
-    background-color:#00A6DA;
+    /* background-color:#00A6DA; */
     color: #fff;
     border-radius: 4px;
     display: flex;
@@ -135,7 +135,7 @@ p,span,div {
     font-weight: 700;
     line-height: 17.64px;
     text-align: center;
-    background-color: #00CDDA;
+    /* background-color: #00CDDA; */
     border-radius: 4px;
     padding: 2px 6px;
 }
@@ -144,7 +144,7 @@ p,span,div {
     margin-top: 10px;
     height: 2px;
     width: 100%;
-    background-color: #00A6DA;
+    /* background-color: #00A6DA; */
     margin-bottom: 25px;
 }
 
@@ -195,6 +195,7 @@ p,span,div {
     box-shadow: 0 2px 6px rgba(0, 0, 0, .1), 0 5px 5px rgba(0, 0, 0, .25);
     border-radius: 8px;
     margin-bottom: 30px;
+    cursor: grab;
 }
 
 .row-1 {

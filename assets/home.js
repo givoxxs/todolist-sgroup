@@ -69,7 +69,7 @@ popupMain.addEventListener('click', function(event) {
 
 // clock
 function getCurrentTime() {
-    const now = new Date();
+    const now = new Date()
     const month = now.toLocaleString('en', { month: 'long' })
     const day = now.getDate()
     const year = now.getFullYear()
@@ -109,7 +109,7 @@ popupMain.addEventListener('submit', function(event) {
         contentStyle.style.border = "1px solid rgba(0, 0, 0, 0.5)"
     }
 
-    let currentTime = getCurrentTime();
+    let currentTime = getCurrentTime()
 
     let task = {
         caption: caption,
@@ -235,7 +235,7 @@ function onEdit(index, type) {
         } else {
             checkbox.checked = false
         }
-    });
+    })
 }
 // save edit task
 popupEditMain.addEventListener('submit', function(event) {
@@ -251,7 +251,7 @@ popupEditMain.addEventListener('submit', function(event) {
         time: timeSave
     }
 
-    let type;
+    let type
     if (checkboxTodo.checked) {
         type = 'todo'
     } else if (checkboxDoing.checked) {
@@ -302,25 +302,25 @@ function render() {
     let elements = todo.map((item, index) => {
         return `
         <div class="item" draggable="true">
-        <div class="row-1">
-            <div class="col-1">
-                <a class="caption" href="#">${item.caption}</a>
-                <h2 class="title">${item.title}</h2>
-                <div class="division"></div>
+            <div class="row-1">
+                <div class="col-1">
+                    <a class="caption" href="#">${item.caption}</a>
+                    <h2 class="title">${item.title}</h2>
+                    <div class="division"></div>
+                </div>
+                <div class="col-2">
+                    <img class="editTask" onclick="onEdit(${index}, 'todo')" src="./assets/img/icon/pencil.svg" alt="">
+                    <img class="deleteTask" onclick="onDelete(${index}, 'todo')" src="./assets/img/icon/trashcan.svg" alt="">
+                </div>
             </div>
-            <div class="col-2">
-                <img class="editTask" onclick="onEdit(${index}, 'todo')" src="./assets/img/icon/pencil.svg" alt="">
-                <img class="deleteTask" onclick="onDelete(${index}, 'todo')" src="./assets/img/icon/trashcan.svg" alt="">
+            <div class="row-2">
+                <p class="note content">${item.content}</p>
+                <div class="date">
+                    <img src="./assets/img/icon/clock-line.svg" alt="">
+                    <span class="clock">${item.time}</span>
+                </div>
             </div>
         </div>
-        <div class="row-2">
-            <p class="note content">${item.content}</p>
-            <div class="date">
-                <img src="./assets/img/icon/clock-line.svg" alt="">
-                <span class="clock">${item.time}</span>
-            </div>
-        </div>
-    </div>
         `
     })
     // render task doing
@@ -328,25 +328,25 @@ function render() {
     elements = doing.map((item, index) => {
         return `
         <div class="item" draggable="true">
-        <div class="row-1">
-            <div class="col-1">
-                <a class="caption" href="#">${item.caption}</a>
-                <h2 class="title">${item.title}</h2>
-                <div class="division"></div>
+            <div class="row-1">
+                <div class="col-1">
+                    <a class="caption" href="#">${item.caption}</a>
+                    <h2 class="title">${item.title}</h2>
+                    <div class="division"></div>
+                </div>
+                <div class="col-2">
+                    <img class="editTask" onclick="onEdit(${index}, 'doing')" src="./assets/img/icon/pencil.svg" alt="">
+                    <img class="deleteTask" onclick="onDelete(${index}, 'doing')" src="./assets/img/icon/trashcan.svg" alt="">
+                </div>
             </div>
-            <div class="col-2">
-                <img class="editTask" onclick="onEdit(${index}, 'doing')" src="./assets/img/icon/pencil.svg" alt="">
-                <img class="deleteTask" onclick="onDelete(${index}, 'doing')" src="./assets/img/icon/trashcan.svg" alt="">
+            <div class="row-2">
+                <p class="note content">${item.content}</p>
+                <div class="date">
+                    <img src="./assets/img/icon/clock-line.svg" alt="">
+                    <span class="clock">${item.time}</span>
+                </div>
             </div>
         </div>
-        <div class="row-2">
-            <p class="note content">${item.content}</p>
-            <div class="date">
-                <img src="./assets/img/icon/clock-line.svg" alt="">
-                <span class="clock">${item.time}</span>
-            </div>
-        </div>
-    </div>
         `
     })
     // render task completed
@@ -404,78 +404,125 @@ function render() {
     taskBlock.innerHTML = elements.join('')
 }
 
-// drag and drop functionality
-const items = document.querySelectorAll('.item');
+// drag and drop 
+let lists = document.querySelectorAll('.item')
+console.log(lists)
 
-items.forEach(item => {
-    item.addEventListener('dragstart', dragStart);
-    item.addEventListener('dragend', dragEnd);
-    item.addEventListener('dragover', dragOver);
-    item.addEventListener('dragenter', dragEnter);
-    item.addEventListener('dragleave', dragLeave);
-    item.addEventListener('drop', dragDrop);
-});
+lists.forEach(list => {
+    list.addEventListener('dragstart', function(e) {
+        e.dataTransfer.setData('text/plain', list.id)
+    })
+})
 
-function dragStart() {
-    this.classList.add('dragging');
+let columns = [taskTodo, taskDoing, taskCompleted, taskBlock]
+
+for (list of lists) {
+    list.addEventListener('dragstart', function(e) {
+        let selected = e.target
+        console.log("selected : " +selected)
+        taskDoing.addEventListener('dragover', function(e) {
+            e.preventDefault()
+        })
+        taskDoing.addEventListener('drop', function(e) {
+            e.preventDefault()
+            taskDoing.appendChild(selected)
+            selected = null
+            render2()
+            renderNumber()
+        })
+        taskCompleted.addEventListener('dragover', function(e) {
+            e.preventDefault()
+        })
+        taskCompleted.addEventListener('drop', function(e) {
+            e.preventDefault()
+            taskCompleted.appendChild(selected)
+            selected = null
+            render2()
+            renderNumber()
+        })
+        taskBlock.addEventListener('dragover', function(e) {
+            e.preventDefault()
+        })
+        taskBlock.addEventListener('drop', function(e) {
+            e.preventDefault()
+            taskBlock.appendChild(selected)
+            selected = null
+            render2()
+            renderNumber()
+        })
+        taskTodo.addEventListener('dragover', function(e) {
+            e.preventDefault()
+        })
+        taskTodo.addEventListener('drop', function(e) {
+            e.preventDefault()
+            taskTodo.appendChild(selected)
+            selected = null
+            render2()
+            renderNumber()
+        })
+    })
+    
+}
+//update data after drag and drop
+function render2() {
+    console.log('render2')
+    let todoItems = taskTodo.querySelectorAll('.item')
+    console.log("todoItem: ", todoItems)
+    let doingItems = taskDoing.querySelectorAll('.item')
+    console.log("doingItem: ", doingItems)
+    let completedItems = taskCompleted.querySelectorAll('.item')
+    console.log("completedItem: ", completedItems)
+    let blockItems = taskBlock.querySelectorAll('.item')
+    console.log("blockItem: ", blockItems)
+
+    // Update todo
+    todo = Array.from(todoItems).map(item => {
+        return {
+            caption: item.querySelector('.caption').innerText,
+            title: item.querySelector('.title').innerText,
+            content: item.querySelector('.note.content').innerText,
+            time: item.querySelector('.clock').innerText
+        }
+    })
+    console.log("todo: ", todo)
+
+    // Update doing
+    doing = Array.from(doingItems).map(item => {
+        return {
+            caption: item.querySelector('.caption').innerText,
+            title: item.querySelector('.title').innerText,
+            content: item.querySelector('.note.content').innerText,
+            time: item.querySelector('.clock').innerText
+        }
+    })
+    console.log("doing: ", doing)
+
+    // Update completed
+    completed = Array.from(completedItems).map(item => {
+        return {
+            caption: item.querySelector('.caption').innerText,
+            title: item.querySelector('.title').innerText,
+            content: item.querySelector('.note.content').innerText,
+            time: item.querySelector('.clock').innerText
+        }
+    })
+    console.log("completed: ", completed)
+
+    // Update block
+    block = Array.from(blockItems).map(item => {
+        return {
+            caption: item.querySelector('.caption').innerText,
+            title: item.querySelector('.title').innerText,
+            content: item.querySelector('.note.content').innerText,
+            time: item.querySelector('.clock').innerText
+        }
+    })
+    console.log("block: ", block)
+
+    localStorage.setItem("todo", JSON.stringify(todo))
+    localStorage.setItem("doing", JSON.stringify(doing))
+    localStorage.setItem("completed", JSON.stringify(completed))
+    localStorage.setItem("block", JSON.stringify(block))
 }
 
-function dragEnd() {
-    this.classList.remove('dragging');
-}
 
-function dragOver(e) {
-    e.preventDefault();
-}
-
-function dragEnter(e) {
-    e.preventDefault();
-    this.classList.add('dragover');
-}
-
-function dragLeave() {
-    this.classList.remove('dragover');
-}
-
-function dragDrop() {
-    const draggingItem = document.querySelector('.dragging');
-    const parent = this.parentElement;
-    const type = parent.id;
-
-    const index = Array.from(parent.children).indexOf(this);
-    let task;
-
-    if (type === 'todo') {
-        task = todo.splice(index, 1)[0];
-    } else if (type === 'doing') {
-        task = doing.splice(index, 1)[0];
-    } else if (type === 'completed') {
-        task = completed.splice(index, 1)[0];
-    } else if (type === 'block') {
-        task = block.splice(index, 1)[0];
-    }
-
-    if (draggingItem.parentElement.id === type) {
-        parent.insertBefore(draggingItem, this);
-    } else {
-        parent.insertBefore(draggingItem, this.nextSibling);
-    }
-
-    if (type === 'todo') {
-        doing.splice(index, 0, task);
-    } else if (type === 'doing') {
-        completed.splice(index, 0, task);
-    } else if (type === 'completed') {
-        block.splice(index, 0, task);
-    } else if (type === 'block') {
-        completed.splice(index, 0, task);
-    }
-
-    localStorage.setItem('todo', JSON.stringify(todo));
-    localStorage.setItem('doing', JSON.stringify(doing));
-    localStorage.setItem('completed', JSON.stringify(completed));
-    localStorage.setItem('block', JSON.stringify(block));
-
-    render();
-    renderNumber();
-}
