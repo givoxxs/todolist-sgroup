@@ -205,6 +205,10 @@ let timeSave = null
 function onEdit(index, type) { 
     editIndex = index
     preType = type
+    console.log("editIndex: ", editIndex)
+    console.log("preType: ", preType)
+    console.log("index: ", index)
+    console.log("type: ", type)
 
     let task = {} 
 
@@ -217,6 +221,8 @@ function onEdit(index, type) {
     } else {
         task = block[index]
     }
+
+    console.log("task: ", task)
 
     taskToEdit = task
     timeSave = task.time
@@ -414,58 +420,112 @@ lists.forEach(list => {
     })
 })
 
-let columns = [taskTodo, taskDoing, taskCompleted, taskBlock]
-
-for (list of lists) {
-    list.addEventListener('dragstart', function(e) {
-        let selected = e.target
-        console.log("selected : " +selected)
-        taskDoing.addEventListener('dragover', function(e) {
-            e.preventDefault()
-        })
-        taskDoing.addEventListener('drop', function(e) {
-            e.preventDefault()
-            taskDoing.appendChild(selected)
-            selected = null
-            render2()
-            renderNumber()
-        })
-        taskCompleted.addEventListener('dragover', function(e) {
-            e.preventDefault()
-        })
-        taskCompleted.addEventListener('drop', function(e) {
-            e.preventDefault()
-            taskCompleted.appendChild(selected)
-            selected = null
-            render2()
-            renderNumber()
-        })
-        taskBlock.addEventListener('dragover', function(e) {
-            e.preventDefault()
-        })
-        taskBlock.addEventListener('drop', function(e) {
-            e.preventDefault()
-            taskBlock.appendChild(selected)
-            selected = null
-            render2()
-            renderNumber()
-        })
-        taskTodo.addEventListener('dragover', function(e) {
-            e.preventDefault()
-        })
-        taskTodo.addEventListener('drop', function(e) {
-            e.preventDefault()
-            taskTodo.appendChild(selected)
-            selected = null
-            render2()
-            renderNumber()
+function setupDrapDrop() {
+    let lists = document.querySelectorAll('.item')
+    lists.forEach(list => {
+        list.addEventListener('dragstart', function(e) {
+            e.dataTransfer.setData('text/plain', list.id)
         })
     })
-    
 }
+
+let found = false; 
+
+for (let list of lists) {
+    setupDrapDrop()
+    console.log(found)
+    if (found) {
+        break; 
+    }
+    console.log("begin drap list external")
+    list.addEventListener('dragstart', function(e) {
+        console.log("begin drap list internal")
+        let selected = e.target;
+        console.log("selected : " +selected);
+        
+        taskDoing.addEventListener('dragover', function(e) {
+            e.preventDefault();
+        });
+
+        taskDoing.addEventListener('drop', function(e) {
+            console.log("taskDoing nhận 1 item")
+            e.preventDefault();
+            taskDoing.appendChild(selected);
+            selected = null;
+            render2();
+            console.log("out render2")
+            // setupDrapDrop();
+            renderNumber();
+            found = true; // Đặt found thành true để thoát khỏi vòng lặp
+            console.log(found)
+            return 
+        });
+
+        taskCompleted.addEventListener('dragover', function(e) {
+            e.preventDefault();
+        });
+
+        taskCompleted.addEventListener('drop', function(e) {
+            console.log("taskCompleted nhận 1 item")
+            e.preventDefault();
+            taskCompleted.appendChild(selected);
+            selected = null;
+            render2();
+            console.log("out render2")
+            // setupDrapDrop();
+            renderNumber();
+            found = true; // Đặt found thành true để thoát khỏi vòng lặp
+            console.log(found)
+            return;
+            console.log('đã return')
+        });
+
+        taskBlock.addEventListener('dragover', function(e) {
+            e.preventDefault();
+        });
+
+        taskBlock.addEventListener('drop', function(e) {
+            console.log("taskBlock Nhận 1 item")
+            e.preventDefault();
+            taskBlock.appendChild(selected);
+            selected = null;
+            render2();
+            console.log("out render2")
+            // setupDrapDrop();
+            renderNumber();
+            found = true; // Đặt found thành true để thoát khỏi vòng lặp
+            console.log(found)
+            return
+        });
+
+        taskTodo.addEventListener('dragover', function(e) {
+            e.preventDefault();
+        });
+
+        taskTodo.addEventListener('drop', function(e) {
+            console.log("taskTodo nhận 1 item")
+            e.preventDefault();
+            taskTodo.appendChild(selected);
+            selected = null;
+            render2();
+            console.log("out render2")
+            // setupDrapDrop();
+            renderNumber();
+            found = true; // Đặt found thành true để thoát khỏi vòng lặp
+            console.log(found)
+            return
+        });
+
+        console.log("selected - after: ", selected);
+        console.log("end drap list internal");
+        console.log("found: ", found)
+    });
+    console.log("end drap list external");
+}
+
 //update data after drag and drop
 function render2() {
-    console.log('render2')
+    console.log('begin render2')
     let todoItems = taskTodo.querySelectorAll('.item')
     console.log("todoItem: ", todoItems)
     let doingItems = taskDoing.querySelectorAll('.item')
@@ -523,6 +583,36 @@ function render2() {
     localStorage.setItem("doing", JSON.stringify(doing))
     localStorage.setItem("completed", JSON.stringify(completed))
     localStorage.setItem("block", JSON.stringify(block))
+
+    console.log("end render2")
 }
 
+function onStage() {
+    let todo = []
+    let doing = []
+    let completed = []
+    let block = []
 
+    if (localStorage.getItem("todo")) {
+        todo = JSON.parse(localStorage.getItem("todo"))
+        localStorage.setItem("todo", JSON.stringify(todo))
+    }
+
+    if (localStorage.getItem("doing")) {
+        doing = JSON.parse(localStorage.getItem("doing"))
+        localStorage.setItem("doing", JSON.stringify(doing))
+    }
+
+    if (localStorage.getItem("completed")) {
+        completed = JSON.parse(localStorage.getItem("completed"))
+        localStorage.setItem("completed", JSON.stringify(completed))
+    }
+
+    if (localStorage.getItem("block")) {
+        block = JSON.parse(localStorage.getItem("block"))
+        localStorage.setItem("block", JSON.stringify(block))
+    }
+
+    render()
+    renderNumber()
+}
